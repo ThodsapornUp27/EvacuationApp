@@ -13,9 +13,10 @@ builder.Services.AddEndpointsApiExplorer();
 // Add SwaggerGen
 builder.Services.AddSwaggerGen();
 
+
 //ref https://stackoverflow.com/questions/68655350/stackexchange-redis-dependency-injection-of-idatabase
 // Add redis
-builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
+builder.Services.AddSingleton<IDatabase>(cfg =>
 {
     var configuration = new ConfigurationOptions
     {
@@ -24,12 +25,7 @@ builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
         Password = "t7txC9w4bxDO0iy4IV7HtStW6zRtPGDz",
     };
 
-    return ConnectionMultiplexer.Connect(configuration);
-});
-
-builder.Services.AddScoped<IDatabase>(sp =>
-{
-    var multiplexer = sp.GetRequiredService<IConnectionMultiplexer>();
+    IConnectionMultiplexer multiplexer = ConnectionMultiplexer.Connect(configuration);
     return multiplexer.GetDatabase();
 });
 
